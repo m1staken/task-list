@@ -1,6 +1,102 @@
 let tasks = [];
 
+// Пароль для доступа
+const PASSWORD = "a04042022a";
+
+function updateTaskInputVisibility() {
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+        document.getElementById('taskInput').style.display = 'flex';
+    } else {
+        document.getElementById('taskInput').style.display = 'none';
+    }
+}
+
+function updateUIByAuth() {
+    const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+    const loginBtn = document.getElementById('loginBtn');
+    const taskInput = document.getElementById('taskInput');
+    const loginForm = document.getElementById('loginForm');
+
+    if (isAuth) {
+        loginBtn.textContent = 'Выйти';
+        loginBtn.onclick = logout;
+        taskInput.style.display = 'flex';
+        loginForm.style.display = 'none';
+    } else {
+        loginBtn.textContent = 'Войти для редактирования';
+        loginBtn.onclick = toggleLoginForm;
+        taskInput.style.display = 'none';
+        loginForm.style.display = 'none';
+    }
+    renderTasks();
+}
+
+// Загружаем задачи при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadTasks();
+    updateUIByAuth();
+});
+
+function toggleLoginForm() {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm.style.display === 'none') {
+        loginForm.style.display = 'block';
+    } else {
+        loginForm.style.display = 'none';
+    }
+}
+
+function checkPassword() {
+    const passwordInput = document.getElementById('password');
+    if (passwordInput.value === PASSWORD) {
+        localStorage.setItem('isAuthenticated', 'true');
+        updateUIByAuth();
+    } else {
+        alert('Неверный пароль!');
+        passwordInput.value = '';
+    }
+}
+
+function toggleLogin() {
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+        localStorage.removeItem('isAuthenticated');
+        hideEditControls();
+        document.getElementById('loginBtn').textContent = 'Войти для редактирования';
+        updateTaskInputVisibility();
+    } else {
+        toggleLoginForm();
+    }
+}
+
+function showEditControls() {
+    updateTaskInputVisibility();
+    // Показываем кнопки редактирования для всех задач
+    const tasks = document.querySelectorAll('li');
+    tasks.forEach(task => {
+        const editBtn = task.querySelector('.edit-button');
+        const deleteBtn = task.querySelector('.delete-button');
+        if (editBtn) editBtn.style.display = 'inline-block';
+        if (deleteBtn) deleteBtn.style.display = 'inline-block';
+    });
+}
+
+function hideEditControls() {
+    updateTaskInputVisibility();
+    // Скрываем кнопки редактирования для всех задач
+    const tasks = document.querySelectorAll('li');
+    tasks.forEach(task => {
+        const editBtn = task.querySelector('.edit-button');
+        const deleteBtn = task.querySelector('.delete-button');
+        if (editBtn) editBtn.style.display = 'none';
+        if (deleteBtn) deleteBtn.style.display = 'none';
+    });
+}
+
 function addTask() {
+    if (localStorage.getItem('isAuthenticated') !== 'true') {
+        alert('Только авторизованный пользователь может добавлять задачи!');
+        return;
+    }
     const taskSubject = document.getElementById('taskSubject').value;
     const taskText = document.getElementById('taskText').value;
     const taskTime = document.getElementById('taskTime').value;
@@ -104,11 +200,12 @@ function renderTasks() {
     
     // Сортируем задачи по дате
     const sortedTasks = [...tasks].sort((a, b) => {
-        // Если у задачи нет даты, помещаем её в конец
         if (!a.time) return 1;
         if (!b.time) return -1;
         return new Date(a.time) - new Date(b.time);
     });
+
+    const isAuth = localStorage.getItem('isAuthenticated') === 'true';
     
     sortedTasks.forEach(task => {
         const li = document.createElement('li');
@@ -118,7 +215,8 @@ function renderTasks() {
         checkbox.type = 'checkbox';
         checkbox.className = 'checkbox';
         checkbox.checked = task.completed;
-        checkbox.onclick = () => toggleTask(task.id);
+        checkbox.onclick = () => { if(isAuth) toggleTask(task.id); };
+        checkbox.disabled = !isAuth;
         
         const taskSubject = document.createElement('span');
         taskSubject.className = 'task-subject';
@@ -142,22 +240,24 @@ function renderTasks() {
             taskTime.textContent = 'Без срока';
         }
 
-        const editButton = document.createElement('button');
-        editButton.className = 'edit-button';
-        editButton.textContent = '✎';
-        editButton.onclick = () => editTask(task.id);
-
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'delete-button';
-        deleteButton.textContent = '×';
-        deleteButton.onclick = () => deleteTask(task.id);
-        
         li.appendChild(checkbox);
         li.appendChild(taskSubject);
         li.appendChild(taskText);
         li.appendChild(taskTime);
-        li.appendChild(editButton);
-        li.appendChild(deleteButton);
+
+        if (isAuth) {
+            const editButton = document.createElement('button');
+            editButton.className = 'edit-button';
+            editButton.textContent = '✎';
+            editButton.onclick = () => editTask(task.id);
+            li.appendChild(editButton);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-button';
+            deleteButton.textContent = '×';
+            deleteButton.onclick = () => deleteTask(task.id);
+            li.appendChild(deleteButton);
+        }
         
         if (task.completed) {
             completedTasksList.appendChild(li);
@@ -179,5 +279,18 @@ function loadTasks() {
     renderTasks();
 }
 
-// Загружаем задачи при загрузке страницы
-document.addEventListener('DOMContentLoaded', loadTasks); 
+function logout() {
+    localStorage.removeItem('isAuthenticated');
+    updateUIByAuth();
+}
+
+function showLoginForm() {
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('taskList').style.display = 'none';
+}
+
+function showTaskList() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('taskList').style.display = 'block';
+    loadTasks();
+} 
