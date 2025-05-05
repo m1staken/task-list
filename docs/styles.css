@@ -43,11 +43,20 @@ h2 {
 }
 
 input[type="text"],
-input[type="datetime-local"] {
+input[type="date"] {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
     flex: 1;
+    background: white;
+    color: #333;
+    font-size: 1em;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+    border: 1px solid #4CAF50;
+    outline: none;
 }
 
 button {
@@ -57,6 +66,8 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-weight: 600;
+    font-size: 1em;
 }
 
 button:hover {
@@ -78,6 +89,8 @@ button:hover {
     border-radius: 4px;
     min-width: 0;
     margin-bottom: 20px;
+    background: white;
+    border: none;
 }
 
 ul {
@@ -97,6 +110,9 @@ li {
     position: relative;
     margin-bottom: 5px;
     width: 100%;
+    background: white;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .checkbox {
@@ -106,6 +122,7 @@ li {
     cursor: pointer;
     flex-shrink: 0;
     margin-top: 3px;
+    accent-color: #4CAF50;
 }
 
 .task-subject {
@@ -120,6 +137,7 @@ li {
 
 .completed-tasks .task-subject {
     text-decoration: line-through;
+    color: #888;
 }
 
 .task-text {
@@ -128,6 +146,7 @@ li {
     white-space: normal;
     flex-shrink: 0;
     padding-right: 10px;
+    color: #333;
 }
 
 .task-time {
@@ -150,6 +169,7 @@ li {
 
 .completed-tasks .task-text {
     text-decoration: line-through;
+    color: #888;
 }
 
 .delete-button {
@@ -168,6 +188,7 @@ li {
     justify-content: center;
     padding: 0;
     flex-shrink: 0;
+    box-shadow: none;
 }
 
 .delete-button:hover {
@@ -190,6 +211,7 @@ li {
     justify-content: center;
     padding: 0;
     flex-shrink: 0;
+    box-shadow: none;
 }
 
 .edit-button:hover {
@@ -208,8 +230,77 @@ li {
     padding: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    background: white;
+    color: #333;
 }
 
 .edit-form button {
     padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.edit-form button:hover {
+    background-color: #45a049;
+}
+
+.login-btn {
+    position: absolute;
+    top: 50px;
+    right: 100px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1em;
+}
+
+.login-btn:hover {
+    background-color: #45a049;
+}
+
+.login-form {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    text-align: center;
+    border: none;
+}
+
+.login-input {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.login-input input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    color: #333;
+}
+
+.logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background-color: #cc0000;
 }
